@@ -66,3 +66,4 @@ npm run test:e2e
 ```sh
 npm run lint
 ```
+# intellya-desafio-front-end-vue
