@@ -1,31 +1,25 @@
-<script lang="ts">
-  import { defineComponent } from 'vue';
+<script setup lang="ts">
+  import { ref } from 'vue';
   import TabHeader from '@/components/header/TabHeader.vue';
   import ListUsersTable from '@/components/list-users-table/ListUsersTable.vue';
-  export default defineComponent({
-    mounted() {
 
-    },
-    components: {
-      TabHeader,
-      ListUsersTable
-    },
-    methods: {
+  let searchString = ref('');
 
-    }
-  })
+  function updateSearchString(string: string) {
+    searchString.value = string;
+  }
 </script>
 
 <template>
   <div>
-    <TabHeader />
+    <TabHeader @update-search-string="updateSearchString" />
   </div>
   <div class="viewContent">
     <div class="pageDescription">
       <h1>Listagem de usuários</h1>
       <p>Visualize os usuários que acessam sua plataforma</p>
     </div>
-    <ListUsersTable />
+    <ListUsersTable :search-string="searchString" />
   </div>
 </template>
 

@@ -1,47 +1,35 @@
-<script lang="ts">
-  import { defineComponent } from 'vue';
+<script setup lang="ts">
+  import { onMounted, ref } from 'vue';
   import axios from 'axios';
   import moment from 'moment';
   import 'moment/locale/pt-br';
   import type { IUser } from '@/types/IUser';
-  export default defineComponent({
-    data(){
-      return {
-        user: {} as IUser,
-        moment
-      }
-    },
-    mounted() {
-      this.fetchData();
-    },
-    components: {
-
-    },
-    props: {
-      id: {
-        type: String,
-        required: true
-      }
-    },
-    methods: {
-      async fetchData() {
-        try {
-          // rota de detalhe está /users, na documentação está /user
-          const response = await axios.get(`http://localhost:3000/users/${this.id}`, {
-            headers: {
-              'x-api-key': '70335667-2408-4011-a994-ea3e7042d96f'
-            }
-          });
-          this.user = response.data;
-        } catch (error) {
-          console.log(error);
-        }
-      },
-      formatarData(data: string){
-        return moment(data).format('DD/MM/YYYY [às] HH:mm');
-      }
+  const props = defineProps({
+    id: {
+      type: String,
+      required: true
     }
   });
+  let user = ref(<IUser>({}));
+  async function fetchData() {
+    try {
+      // rota de detalhe está /users, na documentação está /user
+      const response = await axios.get(`http://localhost:3000/users/${props.id}`, {
+        headers: {
+          'x-api-key': '70335667-2408-4011-a994-ea3e7042d96f'
+        }
+      });
+      user.value = response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  onMounted(() => {
+    fetchData();
+  });
+  function formatarData(data: string){
+    return moment(data).format('DD/MM/YYYY [às] HH:mm');
+  }
 </script>
 
 <template>
