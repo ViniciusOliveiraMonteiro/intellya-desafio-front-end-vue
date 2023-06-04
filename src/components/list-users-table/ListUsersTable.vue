@@ -1,10 +1,18 @@
 <script setup lang="ts">
-  import { ref, onMounted } from "vue";
+  import { ref, onMounted, computed } from "vue";
   import axios from 'axios';
   import type { IUser } from '@/types/IUser';
+
   let currentPage = ref(1);
   let pageSize = ref(5);
   let users = ref([] as IUser[]);
+  const selectOptions:String[] = ['5', '10', '20'];
+  const props = defineProps({
+    searchString: {
+      type: String,
+    }
+  });
+  
   async function fetchData() {
     try {
       const response = await axios.get('http://localhost:3000/users', {
@@ -20,7 +28,7 @@
   onMounted(()=>{
     fetchData();
   });
-  function displayedUsers(): Array<IUser> {
+  function displayedUsers(){
     const startIndex = (currentPage.value - 1) * pageSize.value;
     const endIndex = startIndex + pageSize.value;
     return users.value.slice(startIndex, endIndex);
@@ -28,15 +36,31 @@
   function onClickHandler(page: number){
     currentPage.value = page;
   }
+  function filteredUsers(){
+    const search = props.searchString?.toLowerCase().trim();
+    console.log(search);
+    if (!search) {
+      return users.value;
+    }
+    return users.value.filter(user => {
+      const nameMatch = user.name.toLowerCase().includes(search);
+      const emailMatch = user.email.toLowerCase().includes(search);
+      return nameMatch || emailMatch;
+    });
+  };
 </script>
 
 <template>
-  <select name="userCount" id="userCount" v-model="pageSize">
-    <option selected value="5">5</option>
-    <option value="10">10</option>
-    <option value="15">15</option>
-    <option value="20">20</option>
-  </select>
+  <div>
+    <v-select
+      v-model="pageSize"
+      :items="selectOptions"
+      outlined
+      dense
+      hide-details
+      class="customSelect"
+    ></v-select>
+  </div>
   <div class="d-flex justify-content-center">
     <table class="listTable" v-if="users.length">
       <thead>
@@ -49,26 +73,45 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="user in displayedUsers()" :key="user.id">
-          <td>{{ user.id }}</td>
-          <td>{{ user.name }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.role === 'member' ? 'Membro' : 'Administrador' }}</td>
-          <td>
-            <router-link :to="'/detalhe/'+user.id">Visualizar</router-link>
-          </td>
-        </tr>
+        <template v-if="props.searchString && props.searchString.trim().length">
+          <tr v-for="user in filteredUsers()" :key="user.id">
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.role === 'member' ? 'Membro' : 'Administrador' }}</td>
+            <td>
+              <router-link :to="'/detalhe/'+user.id">Visualizar</router-link>
+            </td>
+          </tr>
+        </template>
+        <template v-else>
+          <tr v-for="user in displayedUsers()" :key="user.id">
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.role === 'member' ? 'Membro' : 'Administrador' }}</td>
+            <td>
+              <router-link :to="'/detalhe/'+user.id">Visualizar</router-link>
+            </td>
+          </tr>
+          
+        </template>
       </tbody>
     </table>
   </div>
-  <vue-awesome-paginate
-    v-if="users.length"
-    :total-items="users.length"
-    :items-per-page="+pageSize"
-    :max-pages-shown="4"
-    v-model="currentPage"
-    :on-click="onClickHandler"
-  />
+  <div 
+    v-if="users.length && !props.searchString?.trim().length" 
+    class="d-flex justify-content-end"
+  >
+    <vue-awesome-paginate
+      v-if="users.length"
+      :total-items="users.length"
+      :items-per-page="+pageSize"
+      :max-pages-shown="4"
+      v-model="currentPage"
+      :on-click="onClickHandler"
+    />
+  </div>
 </template>
 
 <style>
@@ -140,5 +183,9 @@
   }
   .active-page:hover {
     background-color: #2988c8;
+  }
+  .customSelect {
+    display: flex;
+    justify-content: end;
   }
 </style>

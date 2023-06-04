@@ -1,27 +1,13 @@
-<script lang="ts">
-  import { defineComponent } from 'vue';
+<script setup lang="ts">
+  import { ref, onMounted } from 'vue';
   import TabHeader from '@/components/header/TabHeader.vue';
   import UserDetails from '@/components/user-details/UserDetails.vue';
   import { useRoute } from 'vue-router';
-  export default defineComponent({
-    mounted() {
-        
-    },
-    components: {
-      TabHeader,
-      UserDetails
-    },
-    methods: {
 
-    },
-    setup(){
-      const route = useRoute();
-      const userId = route.params.id as string;
-      return {
-        userId,
-      };
-    }
-  });
+  const route = useRoute();
+  const userId = ref('');
+
+  userId.value = route.params.id as string;
 </script>
 
 <template>

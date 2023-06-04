@@ -1,17 +1,15 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+  import { ref, watch } from 'vue';
   import { CIcon } from '@coreui/icons-vue';
   import { cilSearch } from '@coreui/icons';
-  export default defineComponent({
-    components: {
-      CIcon
-    },
-    setup(){
-      return {
-        cilSearch
-      }
-    }
-  });
+
+  const searchString = ref('');
+  const emits = defineEmits(['update-search-string']);
+
+  function updateSearchString(event: Event | InputEvent) {
+    searchString.value = (event.target as HTMLInputElement).value;
+    emits('update-search-string', searchString.value);
+  }
 </script>
 <template>
   <div>
@@ -28,6 +26,8 @@ import { defineComponent } from 'vue';
             type="text" 
             name="search" 
             id="search"
+            v-model="searchString" 
+            @input="updateSearchString"
             placeholder="Pesquisar"
           >
         </div>
