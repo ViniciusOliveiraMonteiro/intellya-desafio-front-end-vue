@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
+  import { ref } from 'vue';
   import { CIcon } from '@coreui/icons-vue';
   import { cilSearch } from '@coreui/icons';
 
@@ -14,9 +14,13 @@
 <template>
   <div>
     <div class='headerContainer d-flex align-items-center justify-content-between'>
-      <div class="d-flex align-items-center py-3 ps-5 ms-5">
-        <img class="logo" src="@/assets/logo.png" alt="Logo">
-        <span class="ms-5">Usuário</span>
+      <div class="d-flex align-items-center ps-5 ms-5 gap-5">
+        <div class="my-3">
+          <img class="logo" src="@/assets/logo.png" alt="Logo">
+        </div>
+        <div class="d-flex align-items-center align-self-stretch customUnderline">
+          <div class="font-weight-bold">Usuário</div>
+        </div>
       </div>
       <div class="pe-5 me-5">
         <div class="d-flex align-items-center customInput">
@@ -39,6 +43,14 @@
   .logo {
     width: 200px;
     height: 50px;
+  }
+
+  .customUnderline {
+    border-bottom: 2px solid #E4CA85;
+  }
+
+  .headerContainer span {
+    border-bottom: 1px solid yellow;
   }
 
   .headerContainer {

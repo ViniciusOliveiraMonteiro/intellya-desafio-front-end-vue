@@ -1,25 +1,25 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
-  import axios from 'axios';
   import moment from 'moment';
   import 'moment/locale/pt-br';
   import type { IUser } from '@/types/IUser';
+  import { Request } from '@/libs/request';
+
+  let user = ref(<IUser>({}));
+  const request = new Request();
   const props = defineProps({
     id: {
       type: String,
       required: true
     }
   });
-  let user = ref(<IUser>({}));
   async function fetchData() {
     try {
       // rota de detalhe está /users, na documentação está /user
-      const response = await axios.get(`http://localhost:3000/users/${props.id}`, {
-        headers: {
-          'x-api-key': '70335667-2408-4011-a994-ea3e7042d96f'
-        }
-      });
-      user.value = response.data;
+      const response = await request.getResponse('/users/' + props.id);
+      if (!Array.isArray(response)) {
+        user.value = response;
+      }
     } catch (error) {
       console.log(error);
     }
@@ -34,7 +34,13 @@
 
 <template>
   <div class="d-flex justify-content-center">
-    <table class="userDetail" v-if="user">
+    <div 
+      class="noRegisterFound"
+      v-if="!Object.keys(user).length"
+    >
+      <span>Nenhum registro encontrado</span>
+    </div>
+    <table class="userDetail" v-if="Object.keys(user).length">
       <tbody>
         <tr>
           <td>Nome</td>
@@ -62,6 +68,14 @@
 </template>
 
 <style>
+  .noRegisterFound {
+    margin-top: 50px;
+    color: #7d7d7d;
+  }
+  .noRegisterFound span {
+    font-weight: bold;
+    font-family: sans-serif;
+  }
   .userDetail {
     border-collapse: collapse;
     margin: 25px 0;
