@@ -1,26 +1,27 @@
 <script setup lang="ts">
-  import { ref, onMounted, computed } from "vue";
-  import axios from 'axios';
+  import { ref, onMounted, watch } from "vue";
   import type { IUser } from '@/types/IUser';
+  import { Request } from '@/libs/request'
 
   let currentPage = ref(1);
   let pageSize = ref(5);
   let users = ref([] as IUser[]);
   const selectOptions:String[] = ['5', '10', '20'];
+  const request = new Request();
   const props = defineProps({
     searchString: {
       type: String,
     }
   });
+
+  watch(() => pageSize.value, () => {
+    currentPage.value = 1;
+  });
   
   async function fetchData() {
     try {
-      const response = await axios.get('http://localhost:3000/users', {
-        headers: {
-          'x-api-key': '70335667-2408-4011-a994-ea3e7042d96f'
-        }
-      });
-      users.value = response.data;
+      const response = await request.getResponse('/users');
+      users.value = Array.isArray(response) ? response : [response];
     } catch (error) {
       console.log(error);
     }
@@ -53,6 +54,7 @@
 <template>
   <div>
     <v-select
+      v-if="users.length"
       v-model="pageSize"
       :items="selectOptions"
       outlined
@@ -62,6 +64,12 @@
     ></v-select>
   </div>
   <div class="d-flex justify-content-center">
+    <div
+      class="noRegisterFound"
+      v-if="!users.length"
+    >
+      <span>Nenhum registro encontrado</span>
+    </div>
     <table class="listTable" v-if="users.length">
       <thead>
         <tr>
@@ -115,6 +123,14 @@
 </template>
 
 <style>
+  .noRegisterFound {
+    margin-top: 50px;
+    color: #7d7d7d;
+  }
+  .noRegisterFound span {
+    font-weight: bold;
+    font-family: sans-serif;
+  }
   .listTable {
     border-collapse: collapse;
     margin: 25px 0;
