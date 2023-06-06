@@ -27,7 +27,7 @@
   onMounted(() => {
     fetchData();
   });
-  function formatarData(data: string){
+  function formatDate(data: string){
     return moment(data).format('DD/MM/YYYY [às] HH:mm');
   }
 </script>
@@ -60,7 +60,7 @@
         </tr>
         <tr>
           <td>Data de cadastro</td>
-          <td>{{ formatarData(user.created_at) }}</td>
+          <td>{{ formatDate(user.created_at) }}</td>
         </tr>
       </tbody>
     </table>

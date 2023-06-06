@@ -16,7 +16,9 @@
     <div class='headerContainer d-flex align-items-center justify-content-between'>
       <div class="d-flex align-items-center ps-5 ms-5 gap-5">
         <div class="my-3">
-          <img class="logo" src="@/assets/logo.png" alt="Logo">
+          <router-link to="/">
+            <img class="logo" src="@/assets/logo.png" alt="Logo">
+          </router-link>
         </div>
         <div class="d-flex align-items-center align-self-stretch customUnderline">
           <div class="font-weight-bold">Usuário</div>
