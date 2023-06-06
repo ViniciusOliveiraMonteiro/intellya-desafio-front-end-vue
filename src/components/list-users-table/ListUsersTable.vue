@@ -39,7 +39,6 @@
   }
   function filteredUsers(){
     const search = props.searchString?.toLowerCase().trim();
-    console.log(search);
     if (!search) {
       return users.value;
     }
@@ -88,7 +87,7 @@
             <td>{{ user.email }}</td>
             <td>{{ user.role === 'member' ? 'Membro' : 'Administrador' }}</td>
             <td>
-              <router-link :to="'/detalhe/'+user.id">Visualizar</router-link>
+              <router-link :to="`/detalhe/${user.id}`">Visualizar</router-link>
             </td>
           </tr>
         </template>
@@ -99,7 +98,7 @@
             <td>{{ user.email }}</td>
             <td>{{ user.role === 'member' ? 'Membro' : 'Administrador' }}</td>
             <td>
-              <router-link :to="'/detalhe/'+user.id">Visualizar</router-link>
+              <router-link :to="`/detalhe/${user.id}`">Visualizar</router-link>
             </td>
           </tr>
           
